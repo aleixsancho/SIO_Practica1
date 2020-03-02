@@ -8,22 +8,22 @@ try:
 
     cursor = connection.cursor()
 
-    #cursor.execute('''DROP TABLE users, restaurants, ratings''')
+    cursor.execute('''DROP TABLE users, restaurants, ratings''')
 
     create_table_users = '''CREATE TABLE users (
-                                id INTEGER NOT NULL UNIQUE,
+                                id INT NOT NULL UNIQUE,
                                 PRIMARY KEY (id)
                                 );'''
 
     create_table_restaurants = '''CREATE TABLE restaurants (
-                                id INTEGER NOT NULL UNIQUE,
+                                id INT NOT NULL UNIQUE,
                                 PRIMARY KEY (id)
                                 );'''
 
     create_table_ratings = '''CREATE TABLE ratings (
-                                rating INTEGER NOT NULL,
-                                username INTEGER NOT NULL,
-                                restaurant INTEGER NOT NULL
+                                rating FLOAT NOT NULL,
+                                username INT NOT NULL,
+                                restaurant INT NOT NULL,
                                 FOREIGN KEY (username) REFERENCES users (id),
                                 FOREIGN KEY (restaurant) REFERENCES restaurants (id)
                                 );'''
