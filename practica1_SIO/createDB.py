@@ -1,7 +1,6 @@
 import psycopg2
 import pandas as pd
 import numpy as np
-from sqlalchemy import create_engine
 
 def create_clients_table(data):
     # Create a Data Frame with the user name and an identifier starts with 1.
