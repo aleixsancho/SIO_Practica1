@@ -17,7 +17,7 @@ try:
     cursor.execute(median_query)
     ratings = cursor.fetchall()
     all_ratings = pd.DataFrame(ratings, columns=['userID', 'restaurantID', 'rating'])
-
+    '''
     user_ratings = all_ratings.drop(['restaurantID'], axis=1)
     user_ratings = user_ratings.groupby('userID', as_index=False).mean()
     print(user_ratings)
@@ -39,15 +39,19 @@ try:
 
     user_sd = pivot_ratings.std(axis=1, skipna=True)
     print(user_sd)
-
+    '''
     interval_df = all_ratings.drop(['restaurantID'], axis=1)
     interval_df['rating'] = interval_df['rating'].apply(np.int64)
+    interval_df['rating'].replace({10:9}, inplace=True)
     interval_df = interval_df.groupby('rating', as_index=False).count().rename(columns={'userID':'count'})
     print(interval_df)
 
     count_plot = interval_df['count']
     ax = count_plot.plot(kind='bar')
-    ax.set_xticklabels(np.arange(-9, 11))
+    ax.set_xticklabels(np.arange(-9, 10))
+    ax.set_title('Number of occurrences per interval of ratings')
+    ax.set_ylabel('Number of occurrences')
+    ax.set_xlabel('Interval of ratings')
     plt.show()
 except Exception as e:
     print(e)
