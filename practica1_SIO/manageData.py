@@ -27,19 +27,26 @@ try:
     print(restaurant_ratings)
 
     restaurant_visits = all_ratings.drop(['rating'], axis=1)
-    restaurant_visits = restaurant_visits.groupby('restaurantID', as_index=False).count().rename(columns={'userID':'visit'})
+    restaurant_visits = restaurant_visits.groupby('restaurantID', as_index=False).count().rename(
+        columns={'userID': 'visit'})
     print(restaurant_visits)
 
     user_visits = all_ratings.drop(['rating'], axis=1)
-    user_visits = user_visits.groupby('userID', as_index=False).count().rename(columns={'restaurantID':'visit'})
+    user_visits = user_visits.groupby('userID', as_index=False).count().rename(columns={'restaurantID': 'visit'})
     print(user_visits)
 
-    '''
     pivot_ratings = all_ratings.pivot_table(index=['userID'], columns=['restaurantID'], values='rating')
     print(pivot_ratings)
-
-    user_sd = pivot_ratings.std(axis=1, skipna=True)
+    '''
+    user_sd = pd.DataFrame(columns=['std'])
+    user_sd['std'] = pivot_ratings.std(axis=1, skipna=True)
+    user_sd = user_sd.reset_index()
     print(user_sd)
+
+    restaurant_sd = pd.DataFrame(columns=['std'])
+    restaurant_sd['std'] = pivot_ratings.std(skipna=True)
+    restaurant_sd = restaurant_sd.reset_index()
+    print(restaurant_sd)
     
     interval_df = all_ratings.drop(['restaurantID'], axis=1)
     interval_df['rating'] = interval_df['rating'].round(0)
@@ -60,7 +67,7 @@ try:
 
     '''
     delete_decimals = all_ratings
-    delete_decimals['rating'] = all_ratings['rating'].round(0)
+    delete_decimals['rating'] = all_ratings['rating'].count(0)
     print(all_ratings)
     print(delete_decimals)
     delete_decimals = delete_decimals.pivot_table(index=['userID'], columns=['restaurantID'], values='rating')
@@ -69,6 +76,7 @@ try:
     restaurant_mode = delete_decimals.mode()
     print(restaurant_mode)
     '''
+
     '''
     restaurant_ratings_sorted = pd.DataFrame(columns=['rating', 'visit'])
     restaurant_ratings_sorted['rating'] = restaurant_ratings['rating']
@@ -83,6 +91,7 @@ try:
     plt.xlabel('Restaurant rating mean')
     plt.show()
     '''
+
     '''
     restaurant_ratings_sorted['rating'] = restaurant_ratings_sorted['rating'].round(0)
     restaurant_ratings_sorted = restaurant_ratings_sorted.groupby(['rating']).mean().reset_index()
@@ -111,6 +120,7 @@ try:
     plt.plot(mode_group_user['mode'], y(mode_group_user['mode']), "r--")
     plt.show()
     '''
+
     '''
     mean_group_user = pd.DataFrame(columns=['mode', 'mean'])
     mean_group_user['mode'] = user_mode
@@ -128,6 +138,7 @@ try:
     plt.plot(mean_group_user['mean'], y(mean_group_user['mean']), "r--")
     plt.show()
     '''
+
     '''
     mean_counts_user = pd.DataFrame(columns=['count'])
     mean_counts_user['count'] = user_ratings['rating'].round(0)
@@ -142,6 +153,7 @@ try:
     plt.xlabel('Interval of mean')
     plt.show()
     '''
+
     '''
     mean_counts_restaurant = pd.DataFrame(columns=['count'])
     mean_counts_restaurant['count'] = restaurant_ratings['rating'].round(0)
@@ -150,22 +162,23 @@ try:
     mean_counts_restaurant = mean_counts_restaurant.sort_values(by=['mean'])
     print(mean_counts_restaurant)
 
-    
     plt.scatter(mean_counts_restaurant['mean'], mean_counts_restaurant['count'])
     plt.title('Number of restaurants interval mean occurrences')
     plt.ylabel('Number of occurrences')
     plt.xlabel('Interval of mean')
     plt.show()
     '''
+
     '''
     prob_df = pd.DataFrame(columns=['count'])
-    prob_df['count'] = all_ratings['rating']
+    prob_df['count'] = all_ratings['rating'].round(1)
     print(all_ratings)
     print(prob_df)
     prob_df = prob_df['count'].value_counts().reset_index()
     prob_df['probability'] = prob_df['count'] / len(user_ratings)
     prob_df = prob_df.rename(columns={'index': 'rating'})
     prob_df = prob_df.sort_values(by=['rating'])
+    prob_df = prob_df.reset_index(drop=True)
     print(prob_df)
     
     plt.scatter(prob_df['rating'], prob_df['probability'])
@@ -174,28 +187,40 @@ try:
     plt.xlabel('Rating')
     plt.show()
     '''
-    
+
     '''
-    std_mean_user = pd.DataFrame(user_sd, columns=['std']).reset_index(drop=True)
+    std_mean_user = pd.DataFrame(user_sd['std'], columns=['std']).reset_index(drop=True)
     std_mean_user['mean'] = user_ratings['rating']
     print(std_mean_user)
 
     plt.scatter(std_mean_user['mean'], std_mean_user['std'])
-    plt.title('Population deviation per rating mean')
+    plt.title('Population deviation per user rating mean')
     plt.ylabel('Population deviation')
-    plt.xlabel('Rating mean')
+    plt.xlabel('User rating mean')
     plt.show()
     '''
-    
-    '''
-    std_mode_user = pd.DataFrame(user_sd, columns=['std']).reset_index(drop=True)
-    std_mode_user['mode'] = user_mode.reset_index(drop=True)
-    print(std_mode_user)
 
-    plt.scatter(std_mode_user['mode'], std_mode_user['std'])
-    plt.title('Population deviation per rating mode')
+    '''
+    std_mean_restaurant = pd.DataFrame(restaurant_sd['std'], columns=['std']).reset_index(drop=True)
+    std_mean_restaurant['mean'] = restaurant_ratings['rating']
+    print(std_mean_restaurant)
+
+    plt.scatter(std_mean_restaurant['mean'], std_mean_restaurant['std'])
+    plt.title('Population deviation per restaurant rating mean')
     plt.ylabel('Population deviation')
-    plt.xlabel('Rating mode')
+    plt.xlabel('Restaurant rating mean')
+    plt.show()
+    '''
+
+    '''
+    std_mode_restaurant = pd.DataFrame(user_sd['std'], columns=['std']).reset_index(drop=True)
+    std_mode_restaurant['mode'] = user_mode.reset_index(drop=True)
+    print(std_mode_restaurant)
+
+    plt.scatter(std_mode_restaurant['mode'], std_mode_restaurant['std'])
+    plt.title('Population deviation per user rating mode')
+    plt.ylabel('Population deviation')
+    plt.xlabel('User rating mode')
     plt.show()
     '''
 
@@ -232,12 +257,41 @@ try:
     plt.show()
     '''
 
+    '''
     different_users_same_rating = pd.DataFrame(all_ratings.drop(['restaurantID'], axis=1), columns=['userID', 'rating'])
     different_users_same_rating['rating'] = different_users_same_rating['rating'].round(1)
     different_users_same_rating = different_users_same_rating.groupby(['rating', 'userID']).count().reset_index()
     different_users_same_rating = different_users_same_rating.groupby(['rating']).count().reset_index()
     print(different_users_same_rating)
+    
+    plt.scatter(different_users_same_rating['userID'], prob_df['probability'])
+    plt.title('Probability per different users with same rating')
+    plt.ylabel('Probability')
+    plt.xlabel('Number of users')
+    z = np.polyfit(different_users_same_rating['userID'], prob_df['probability'], 1)
+    y = np.poly1d(z)
+    plt.plot(different_users_same_rating['userID'], y(different_users_same_rating['userID']), "r--")
+    plt.show()
+    '''
 
+    '''
+    PROVA DE RESTAURANTS PER INTERVALS (NO SE VEURE RES)
+    ratings_interval_user = all_ratings.drop(['userID'], axis=1)
+    ratings_interval_user['range'] = pd.cut(ratings_interval_user['rating'], np.arange(-10, 11, 5))
+    ratings_interval_user = ratings_interval_user.groupby(['restaurantID', 'range']).count().reset_index()
+    ratings_interval_user = ratings_interval_user.dropna().reset_index(drop=True)
+    ratings_interval_user = ratings_interval_user.reset_index()
+    ratings_interval_user = ratings_interval_user.drop(ratings_interval_user[ratings_interval_user.restaurantID > 25].index)
+    print(ratings_interval_user)
+
+    plt.bar(ratings_interval_user['index'], ratings_interval_user['rating'])
+    plt.title('Restaurants ratings per number of repeated')
+    plt.ylabel('Number of repeated')
+    plt.xlabel('Restaurants ratings intervals')
+    for a, b in zip(ratings_interval_user['index'], ratings_interval_user['rating']):
+        plt.text(a, b, str(ratings_interval_user.at[a, 'restaurantID']), ha='center')
+    plt.show()
+    '''
 except Exception as e:
     print(e)
 
