@@ -37,7 +37,7 @@ try:
 
     pivot_ratings = all_ratings.pivot_table(index=['userID'], columns=['restaurantID'], values='rating')
     print(pivot_ratings)
-    '''
+
     user_sd = pd.DataFrame(columns=['std'])
     user_sd['std'] = pivot_ratings.std(axis=1, skipna=True)
     user_sd = user_sd.reset_index()
@@ -47,27 +47,27 @@ try:
     restaurant_sd['std'] = pivot_ratings.std(skipna=True)
     restaurant_sd = restaurant_sd.reset_index()
     print(restaurant_sd)
-    
+
+    '''
     interval_df = all_ratings.drop(['restaurantID'], axis=1)
     interval_df['rating'] = interval_df['rating'].round(0)
     interval_df['rating'].replace({10:9}, inplace=True)
     interval_df = interval_df.groupby('rating', as_index=False).count().rename(columns={'userID':'count'})
     print(interval_df)
-    '''
 
-    '''
     count_plot = interval_df['count']
     ax = count_plot.plot(kind='bar')
-    ax.set_xticklabels(np.arange(-9, 10))
+    ax.set_xticklabels(np.arange(-10, 10))
     ax.set_title('Number of occurrences per interval of ratings')
     ax.set_ylabel('Number of occurrences')
     ax.set_xlabel('Interval of ratings')
+
     plt.show()
     '''
 
     '''
     delete_decimals = all_ratings
-    delete_decimals['rating'] = all_ratings['rating'].count(0)
+    delete_decimals['rating'] = all_ratings['rating'].round(0)
     print(all_ratings)
     print(delete_decimals)
     delete_decimals = delete_decimals.pivot_table(index=['userID'], columns=['restaurantID'], values='rating')
@@ -77,12 +77,12 @@ try:
     print(restaurant_mode)
     '''
 
-    '''
+
     restaurant_ratings_sorted = pd.DataFrame(columns=['rating', 'visit'])
     restaurant_ratings_sorted['rating'] = restaurant_ratings['rating']
     restaurant_ratings_sorted['visit'] = restaurant_visits['visit']
-    print(restaurant_ratings_sorted)
     restaurant_ratings_sorted = restaurant_ratings_sorted.sort_values(by=['rating'])
+    restaurant_ratings_sorted.to_excel(r'C:\Users\Sancho\Desktop\URV\4t\SIO\SIO_Practica1\plots\1.xlsx', index=False)
     print(restaurant_ratings_sorted)
    
     plt.scatter(restaurant_ratings_sorted['rating'], restaurant_ratings_sorted['visit'])
@@ -90,7 +90,7 @@ try:
     plt.ylabel('Number of visits')
     plt.xlabel('Restaurant rating mean')
     plt.show()
-    '''
+
 
     '''
     restaurant_ratings_sorted['rating'] = restaurant_ratings_sorted['rating'].round(0)
@@ -112,7 +112,7 @@ try:
     print(mode_group_user)
     
     plt.scatter(mode_group_user['mode'], mode_group_user['mean'])
-    plt.title('Mean rating per interval mode')
+    plt.title('Mean rating per interval mode') 
     plt.ylabel('Mean rating')
     plt.xlabel('Interval mode')
     z = np.polyfit(mode_group_user['mode'], mode_group_user['mean'], 1)
@@ -169,7 +169,7 @@ try:
     plt.show()
     '''
 
-    '''
+
     prob_df = pd.DataFrame(columns=['count'])
     prob_df['count'] = all_ratings['rating'].round(1)
     print(all_ratings)
@@ -180,7 +180,7 @@ try:
     prob_df = prob_df.sort_values(by=['rating'])
     prob_df = prob_df.reset_index(drop=True)
     print(prob_df)
-    
+    '''
     plt.scatter(prob_df['rating'], prob_df['probability'])
     plt.title('Probability of each rating')
     plt.ylabel('Probability')
@@ -257,7 +257,7 @@ try:
     plt.show()
     '''
 
-    '''
+
     different_users_same_rating = pd.DataFrame(all_ratings.drop(['restaurantID'], axis=1), columns=['userID', 'rating'])
     different_users_same_rating['rating'] = different_users_same_rating['rating'].round(1)
     different_users_same_rating = different_users_same_rating.groupby(['rating', 'userID']).count().reset_index()
@@ -272,7 +272,7 @@ try:
     y = np.poly1d(z)
     plt.plot(different_users_same_rating['userID'], y(different_users_same_rating['userID']), "r--")
     plt.show()
-    '''
+
 
     '''
     PROVA DE RESTAURANTS PER INTERVALS (NO SE VEURE RES)
