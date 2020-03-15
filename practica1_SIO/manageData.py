@@ -200,7 +200,7 @@ try:
     plt.show()
     '''
 
-    '''
+
     std_mean_restaurant = pd.DataFrame(restaurant_sd['std'], columns=['std']).reset_index(drop=True)
     std_mean_restaurant['mean'] = restaurant_ratings['rating']
     print(std_mean_restaurant)
@@ -210,7 +210,7 @@ try:
     plt.ylabel('Population deviation')
     plt.xlabel('Restaurant rating mean')
     plt.show()
-    '''
+
 
     '''
     std_mode_restaurant = pd.DataFrame(user_sd['std'], columns=['std']).reset_index(drop=True)
