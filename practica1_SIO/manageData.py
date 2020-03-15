@@ -47,10 +47,17 @@ try:
     restaurant_sd['std'] = pivot_ratings.std(skipna=True)
     restaurant_sd = restaurant_sd.reset_index()
     print(restaurant_sd)
-    user_visits.sort_values(by=['visit'], inplace=True)
-    user_visits = user_visits.groupby('visit', as_index=False).count()
-    print(user_visits.tail(50))
 
+    prova_df = user_visits
+    prova_df['rating'] = user_ratings['rating']
+    print(user_ratings)
+    print(prova_df)
+
+    plt.scatter(prova_df['rating'], prova_df['visit'])
+    plt.title('Number of visit per restaurant rating mean')
+    plt.ylabel('Number of visits')
+    plt.xlabel('Restaurant rating mean')
+    plt.show()
     '''
     interval_df = all_ratings.drop(['restaurantID'], axis=1)
     interval_df['rating'] = interval_df['rating'].round(0)
