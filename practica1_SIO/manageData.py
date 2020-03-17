@@ -251,6 +251,39 @@ try:
     '''
 
     '''
+    user_boolean = all_ratings
+    user_ratings_intervals = pd.DataFrame(columns=['range', 'count'])
+    user_ratings_intervals['range'] = np.arange(-10, 9, 2)
+    j = np.arange(-8, 11, 2)
+    counters = np.array([0])
+    x = -10
+    count = 0
+    print(all_ratings)
+    for i in j:
+        if i == 10:
+            i = 11
+        user_boolean['positive'] = (all_ratings['rating'] >= x) & (all_ratings['rating'] < i)
+        x = i
+        user_boolean = user_boolean.groupby('positive', as_index=False).count()
+        user_boolean = user_boolean.drop([0])
+        counters = np.append(counters, user_boolean['rating'])
+        user_boolean = all_ratings
+        count = count + 1
+    counters = np.delete(counters, 0, axis=0)
+    user_ratings_intervals['count'] = counters
+    print(user_ratings_intervals)
+
+    plt.bar(user_ratings_intervals['range'], user_ratings_intervals['count'])
+    plt.title('User rating per group by intervals')
+    plt.ylabel('Number of ratings')
+    plt.xlabel('Rating intervals')
+    plt.xticks(user_ratings_intervals['range'], user_ratings_intervals['range'])
+    for a, b in zip(user_ratings_intervals['range'], user_ratings_intervals['count']):
+        plt.text(a, b, str(round(b / len(user_ratings) * 100, 1)), ha='center')
+    plt.show()
+    '''
+
+    '''
     restaurant_boolean = restaurant_ratings
     restaurant_boolean['positive'] = restaurant_boolean['rating'] >= 0
     restaurant_boolean = restaurant_boolean.groupby('positive', as_index=False).count()
